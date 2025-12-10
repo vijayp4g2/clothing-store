@@ -1,6 +1,6 @@
 // Admin Panel View - Premium Modern Design
 export default function Admin() {
-    return `
+  return `
     <div id="admin-container" class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <!-- Loading State -->
       <div id="admin-loading" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center">
@@ -21,7 +21,7 @@ export default function Admin() {
 
 // Render Login Page
 function renderLoginPage() {
-    return `
+  return `
     <div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       <!-- Animated Background -->
       <div class="absolute inset-0 overflow-hidden">
@@ -99,7 +99,7 @@ function renderLoginPage() {
 
 // Render Admin Dashboard
 function renderAdminDashboard() {
-    return `
+  return `
     <div class="min-h-screen">
       <!-- Header -->
       <header class="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-xl border-b border-white/10">
@@ -440,156 +440,156 @@ function renderAdminDashboard() {
 
 // Initialize Admin Handlers
 function initAdminHandlers() {
-    let isLoggedIn = false;
-    let products = [];
-    let filteredProducts = [];
-    let editingProductId = null;
-    let selectedProducts = new Set();
+  let isLoggedIn = false;
+  let products = [];
+  let filteredProducts = [];
+  let editingProductId = null;
+  let selectedProducts = new Set();
 
-    // Hide loading, show login
-    setTimeout(() => {
-        document.getElementById('admin-loading').classList.add('hidden');
-        document.getElementById('login-page').innerHTML = renderLoginPage();
-        document.getElementById('login-page').classList.remove('hidden');
-        initLoginHandlers();
-    }, 1000);
+  // Hide loading, show login
+  setTimeout(() => {
+    document.getElementById('admin-loading').classList.add('hidden');
+    document.getElementById('login-page').innerHTML = renderLoginPage();
+    document.getElementById('login-page').classList.remove('hidden');
+    initLoginHandlers();
+  }, 1000);
 
-    // Login Handlers
-    function initLoginHandlers() {
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
+  // Login Handlers
+  function initLoginHandlers() {
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
 
-            try {
-                const response = await fetch('/api/admin/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    isLoggedIn = true;
-                    document.getElementById('login-page').classList.add('hidden');
-                    document.getElementById('admin-dashboard').innerHTML = renderAdminDashboard();
-                    document.getElementById('admin-dashboard').classList.remove('hidden');
-                    initDashboardHandlers();
-                    loadProducts();
-                } else {
-                    loginError.textContent = data.message;
-                    loginError.classList.remove('hidden');
-                }
-            } catch (error) {
-                loginError.textContent = 'Login failed. Please try again.';
-                loginError.classList.remove('hidden');
-            }
-        });
-    }
-
-    // Dashboard Handlers
-    function initDashboardHandlers() {
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            isLoggedIn = false;
-            location.reload();
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
         });
 
-        // Add Product Button
-        document.getElementById('add-product-btn').addEventListener('click', openAddProductModal);
-        document.querySelectorAll('.add-product-trigger').forEach(btn => {
-            btn.addEventListener('click', openAddProductModal);
-        });
+        const data = await response.json();
 
-        // Modal Controls
-        document.getElementById('close-modal').addEventListener('click', closeModal);
-        document.getElementById('cancel-btn').addEventListener('click', closeModal);
-
-        // Product Form
-        document.getElementById('product-form').addEventListener('submit', handleProductSubmit);
-
-        // Image Upload
-        const imageUploadArea = document.getElementById('image-upload-area');
-        const imageInput = document.getElementById('product-image');
-
-        imageUploadArea.addEventListener('click', () => imageInput.click());
-        imageInput.addEventListener('change', handleImageUpload);
-
-        // Drag and drop
-        imageUploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            imageUploadArea.classList.add('border-purple-500');
-        });
-
-        imageUploadArea.addEventListener('dragleave', () => {
-            imageUploadArea.classList.remove('border-purple-500');
-        });
-
-        imageUploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            imageUploadArea.classList.remove('border-purple-500');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                handleImageFile(file);
-            }
-        });
-
-        // Search
-        document.getElementById('search-products').addEventListener('input', filterProducts);
-
-        // Category Filter
-        document.getElementById('filter-category').addEventListener('change', filterProducts);
-
-        // Sort
-        document.getElementById('sort-products').addEventListener('change', sortProducts);
-
-        // Select All
-        document.getElementById('select-all').addEventListener('change', handleSelectAll);
-
-        // Bulk Delete
-        document.getElementById('bulk-delete-btn').addEventListener('click', handleBulkDelete);
-    }
-
-    // Load Products
-    async function loadProducts() {
-        try {
-            const response = await fetch('/api/products');
-            products = await response.json();
-            filteredProducts = [...products];
-            updateStats();
-            renderProducts();
-        } catch (error) {
-            showToast('Failed to load products', 'error');
+        if (data.success) {
+          isLoggedIn = true;
+          document.getElementById('login-page').classList.add('hidden');
+          document.getElementById('admin-dashboard').innerHTML = renderAdminDashboard();
+          document.getElementById('admin-dashboard').classList.remove('hidden');
+          initDashboardHandlers();
+          loadProducts();
+        } else {
+          loginError.textContent = data.message;
+          loginError.classList.remove('hidden');
         }
+      } catch (error) {
+        loginError.textContent = 'Login failed. Please try again.';
+        loginError.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Dashboard Handlers
+  function initDashboardHandlers() {
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      isLoggedIn = false;
+      location.reload();
+    });
+
+    // Add Product Button
+    document.getElementById('add-product-btn').addEventListener('click', openAddProductModal);
+    document.querySelectorAll('.add-product-trigger').forEach(btn => {
+      btn.addEventListener('click', openAddProductModal);
+    });
+
+    // Modal Controls
+    document.getElementById('close-modal').addEventListener('click', closeModal);
+    document.getElementById('cancel-btn').addEventListener('click', closeModal);
+
+    // Product Form
+    document.getElementById('product-form').addEventListener('submit', handleProductSubmit);
+
+    // Image Upload
+    const imageUploadArea = document.getElementById('image-upload-area');
+    const imageInput = document.getElementById('product-image');
+
+    imageUploadArea.addEventListener('click', () => imageInput.click());
+    imageInput.addEventListener('change', handleImageUpload);
+
+    // Drag and drop
+    imageUploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      imageUploadArea.classList.add('border-purple-500');
+    });
+
+    imageUploadArea.addEventListener('dragleave', () => {
+      imageUploadArea.classList.remove('border-purple-500');
+    });
+
+    imageUploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      imageUploadArea.classList.remove('border-purple-500');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        handleImageFile(file);
+      }
+    });
+
+    // Search
+    document.getElementById('search-products').addEventListener('input', filterProducts);
+
+    // Category Filter
+    document.getElementById('filter-category').addEventListener('change', filterProducts);
+
+    // Sort
+    document.getElementById('sort-products').addEventListener('change', sortProducts);
+
+    // Select All
+    document.getElementById('select-all').addEventListener('change', handleSelectAll);
+
+    // Bulk Delete
+    document.getElementById('bulk-delete-btn').addEventListener('click', handleBulkDelete);
+  }
+
+  // Load Products
+  async function loadProducts() {
+    try {
+      const response = await fetch('/api/products');
+      products = await response.json();
+      filteredProducts = [...products];
+      updateStats();
+      renderProducts();
+    } catch (error) {
+      showToast('Failed to load products', 'error');
+    }
+  }
+
+  // Update Stats
+  function updateStats() {
+    const categories = [...new Set(products.map(p => p.category))];
+    const totalValue = products.reduce((sum, p) => sum + p.price, 0);
+
+    document.getElementById('total-products').textContent = products.length;
+    document.getElementById('total-categories').textContent = categories.length;
+  }
+
+  // Render Products
+  function renderProducts() {
+    const tbody = document.getElementById('products-table-body');
+    const emptyState = document.getElementById('empty-state');
+
+    if (filteredProducts.length === 0) {
+      tbody.innerHTML = '';
+      emptyState.classList.remove('hidden');
+      return;
     }
 
-    // Update Stats
-    function updateStats() {
-        const categories = [...new Set(products.map(p => p.category))];
-        const totalValue = products.reduce((sum, p) => sum + p.price, 0);
+    emptyState.classList.add('hidden');
 
-        document.getElementById('total-products').textContent = products.length;
-        document.getElementById('total-categories').textContent = categories.length;
-    }
-
-    // Render Products
-    function renderProducts() {
-        const tbody = document.getElementById('products-table-body');
-        const emptyState = document.getElementById('empty-state');
-
-        if (filteredProducts.length === 0) {
-            tbody.innerHTML = '';
-            emptyState.classList.remove('hidden');
-            return;
-        }
-
-        emptyState.classList.add('hidden');
-
-        tbody.innerHTML = filteredProducts.map(product => `
+    tbody.innerHTML = filteredProducts.map(product => `
       <tr class="hover:bg-white/5 transition-colors product-row" data-id="${product.id}">
         <td class="p-4">
           <input type="checkbox" class="product-checkbox w-4 h-4 rounded border-white/20 bg-white/5 text-purple-500 focus:ring-purple-500 focus:ring-offset-0" data-id="${product.id}">
@@ -628,295 +628,295 @@ function initAdminHandlers() {
       </tr>
     `).join('');
 
-        // Update counts
-        document.getElementById('showing-count').textContent = filteredProducts.length;
-        document.getElementById('total-count').textContent = products.length;
+    // Update counts
+    document.getElementById('showing-count').textContent = filteredProducts.length;
+    document.getElementById('total-count').textContent = products.length;
 
-        // Add checkbox listeners
-        document.querySelectorAll('.product-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', handleProductSelect);
-        });
+    // Add checkbox listeners
+    document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', handleProductSelect);
+    });
+  }
+
+  // Filter Products
+  function filterProducts() {
+    const searchTerm = document.getElementById('search-products').value.toLowerCase();
+    const category = document.getElementById('filter-category').value;
+
+    filteredProducts = products.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(searchTerm);
+      const matchesCategory = !category || product.category === category;
+      return matchesSearch && matchesCategory;
+    });
+
+    sortProducts();
+  }
+
+  // Sort Products
+  function sortProducts() {
+    const sortValue = document.getElementById('sort-products').value;
+
+    switch (sortValue) {
+      case 'name-asc':
+        filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'name-desc':
+        filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'price-asc':
+        filteredProducts.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        filteredProducts.sort((a, b) => b.price - a.price);
+        break;
+      case 'newest':
+        filteredProducts.sort((a, b) => b.id - a.id);
+        break;
     }
 
-    // Filter Products
-    function filterProducts() {
-        const searchTerm = document.getElementById('search-products').value.toLowerCase();
-        const category = document.getElementById('filter-category').value;
+    renderProducts();
+  }
 
-        filteredProducts = products.filter(product => {
-            const matchesSearch = product.name.toLowerCase().includes(searchTerm);
-            const matchesCategory = !category || product.category === category;
-            return matchesSearch && matchesCategory;
-        });
-
-        sortProducts();
+  // Handle Product Select
+  function handleProductSelect(e) {
+    const id = parseInt(e.target.dataset.id);
+    if (e.target.checked) {
+      selectedProducts.add(id);
+    } else {
+      selectedProducts.delete(id);
     }
+    updateBulkActions();
+  }
 
-    // Sort Products
-    function sortProducts() {
-        const sortValue = document.getElementById('sort-products').value;
+  // Handle Select All
+  function handleSelectAll(e) {
+    const checkboxes = document.querySelectorAll('.product-checkbox');
+    checkboxes.forEach(cb => {
+      cb.checked = e.target.checked;
+      const id = parseInt(cb.dataset.id);
+      if (e.target.checked) {
+        selectedProducts.add(id);
+      } else {
+        selectedProducts.delete(id);
+      }
+    });
+    updateBulkActions();
+  }
 
-        switch (sortValue) {
-            case 'name-asc':
-                filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
-                break;
-            case 'name-desc':
-                filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
-                break;
-            case 'price-asc':
-                filteredProducts.sort((a, b) => a.price - b.price);
-                break;
-            case 'price-desc':
-                filteredProducts.sort((a, b) => b.price - a.price);
-                break;
-            case 'newest':
-                filteredProducts.sort((a, b) => b.id - a.id);
-                break;
-        }
-
-        renderProducts();
+  // Update Bulk Actions
+  function updateBulkActions() {
+    const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+    if (selectedProducts.size > 0) {
+      bulkDeleteBtn.classList.remove('hidden');
+      bulkDeleteBtn.textContent = `Delete ${selectedProducts.size} Selected`;
+    } else {
+      bulkDeleteBtn.classList.add('hidden');
     }
+  }
 
-    // Handle Product Select
-    function handleProductSelect(e) {
-        const id = parseInt(e.target.dataset.id);
-        if (e.target.checked) {
-            selectedProducts.add(id);
-        } else {
-            selectedProducts.delete(id);
-        }
+  // Handle Bulk Delete
+  async function handleBulkDelete() {
+    if (!confirm(`Are you sure you want to delete ${selectedProducts.size} products?`)) return;
+
+    try {
+      const response = await fetch('/api/products', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedProducts) })
+      });
+
+      if (response.ok) {
+        showToast('Products deleted successfully', 'success');
+        selectedProducts.clear();
+        document.getElementById('select-all').checked = false;
         updateBulkActions();
+        loadProducts();
+      }
+    } catch (error) {
+      showToast('Failed to delete products', 'error');
+    }
+  }
+
+  // Open Add Product Modal
+  function openAddProductModal() {
+    editingProductId = null;
+    document.getElementById('modal-title').textContent = 'Add New Product';
+    document.getElementById('submit-text').textContent = 'Add Product';
+    document.getElementById('product-form').reset();
+    document.getElementById('image-preview').classList.add('hidden');
+    document.getElementById('upload-placeholder').classList.remove('hidden');
+    document.getElementById('product-modal').classList.remove('hidden');
+  }
+
+  // Edit Product
+  window.editProduct = function (id) {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+
+    editingProductId = id;
+    document.getElementById('modal-title').textContent = 'Edit Product';
+    document.getElementById('submit-text').textContent = 'Update Product';
+
+    document.getElementById('product-name').value = product.name;
+    document.getElementById('product-price').value = product.price;
+    document.getElementById('product-category').value = product.category;
+    document.getElementById('product-description').value = product.description || '';
+    document.getElementById('image-url').value = product.image;
+
+    if (product.image) {
+      document.getElementById('preview-img').src = product.image;
+      document.getElementById('image-preview').classList.remove('hidden');
+      document.getElementById('upload-placeholder').classList.add('hidden');
     }
 
-    // Handle Select All
-    function handleSelectAll(e) {
-        const checkboxes = document.querySelectorAll('.product-checkbox');
-        checkboxes.forEach(cb => {
-            cb.checked = e.target.checked;
-            const id = parseInt(cb.dataset.id);
-            if (e.target.checked) {
-                selectedProducts.add(id);
-            } else {
-                selectedProducts.delete(id);
-            }
-        });
-        updateBulkActions();
+    document.getElementById('product-modal').classList.remove('hidden');
+  };
+
+  // Duplicate Product
+  window.duplicateProduct = async function (id) {
+    try {
+      const response = await fetch(`/api/duplicate?id=${id}`, {
+        method: 'POST'
+      });
+
+      if (response.ok) {
+        showToast('Product duplicated successfully', 'success');
+        loadProducts();
+      }
+    } catch (error) {
+      showToast('Failed to duplicate product', 'error');
     }
+  };
 
-    // Update Bulk Actions
-    function updateBulkActions() {
-        const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
-        if (selectedProducts.size > 0) {
-            bulkDeleteBtn.classList.remove('hidden');
-            bulkDeleteBtn.textContent = `Delete ${selectedProducts.size} Selected`;
-        } else {
-            bulkDeleteBtn.classList.add('hidden');
-        }
+  // Delete Product
+  window.deleteProduct = async function (id) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+
+    try {
+      const response = await fetch(`/api/products`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: [id] })
+      });
+
+      if (response.ok) {
+        showToast('Product deleted successfully', 'success');
+        loadProducts();
+      }
+    } catch (error) {
+      showToast('Failed to delete product', 'error');
     }
+  };
 
-    // Handle Bulk Delete
-    async function handleBulkDelete() {
-        if (!confirm(`Are you sure you want to delete ${selectedProducts.size} products?`)) return;
+  // Close Modal
+  function closeModal() {
+    document.getElementById('product-modal').classList.add('hidden');
+    editingProductId = null;
+  }
 
-        try {
-            const response = await fetch('/api/products/bulk-delete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids: Array.from(selectedProducts) })
-            });
-
-            if (response.ok) {
-                showToast('Products deleted successfully', 'success');
-                selectedProducts.clear();
-                document.getElementById('select-all').checked = false;
-                updateBulkActions();
-                loadProducts();
-            }
-        } catch (error) {
-            showToast('Failed to delete products', 'error');
-        }
+  // Handle Image Upload
+  function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (file) {
+      handleImageFile(file);
     }
+  }
 
-    // Open Add Product Modal
-    function openAddProductModal() {
-        editingProductId = null;
-        document.getElementById('modal-title').textContent = 'Add New Product';
-        document.getElementById('submit-text').textContent = 'Add Product';
-        document.getElementById('product-form').reset();
-        document.getElementById('image-preview').classList.add('hidden');
-        document.getElementById('upload-placeholder').classList.remove('hidden');
-        document.getElementById('product-modal').classList.remove('hidden');
+  // Handle Image File
+  async function handleImageFile(file) {
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('preview-img').src = e.target.result;
+      document.getElementById('image-preview').classList.remove('hidden');
+      document.getElementById('upload-placeholder').classList.add('hidden');
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to server
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        document.getElementById('image-url').value = data.imageUrl;
+        showToast('Image uploaded successfully', 'success');
+      }
+    } catch (error) {
+      showToast('Failed to upload image', 'error');
     }
+  }
 
-    // Edit Product
-    window.editProduct = function (id) {
-        const product = products.find(p => p.id === id);
-        if (!product) return;
+  // Handle Product Submit
+  async function handleProductSubmit(e) {
+    e.preventDefault();
 
-        editingProductId = id;
-        document.getElementById('modal-title').textContent = 'Edit Product';
-        document.getElementById('submit-text').textContent = 'Update Product';
-
-        document.getElementById('product-name').value = product.name;
-        document.getElementById('product-price').value = product.price;
-        document.getElementById('product-category').value = product.category;
-        document.getElementById('product-description').value = product.description || '';
-        document.getElementById('image-url').value = product.image;
-
-        if (product.image) {
-            document.getElementById('preview-img').src = product.image;
-            document.getElementById('image-preview').classList.remove('hidden');
-            document.getElementById('upload-placeholder').classList.add('hidden');
-        }
-
-        document.getElementById('product-modal').classList.remove('hidden');
+    const productData = {
+      name: document.getElementById('product-name').value,
+      price: parseFloat(document.getElementById('product-price').value),
+      category: document.getElementById('product-category').value,
+      description: document.getElementById('product-description').value,
+      image: document.getElementById('image-url').value || 'https://via.placeholder.com/400x500?text=Product+Image'
     };
 
-    // Duplicate Product
-    window.duplicateProduct = async function (id) {
-        try {
-            const response = await fetch(`/api/products/${id}/duplicate`, {
-                method: 'POST'
-            });
+    try {
+      const url = editingProductId
+        ? `/api/products?id=${editingProductId}`
+        : '/api/products';
 
-            if (response.ok) {
-                showToast('Product duplicated successfully', 'success');
-                loadProducts();
-            }
-        } catch (error) {
-            showToast('Failed to duplicate product', 'error');
-        }
-    };
+      const method = editingProductId ? 'PUT' : 'POST';
 
-    // Delete Product
-    window.deleteProduct = async function (id) {
-        if (!confirm('Are you sure you want to delete this product?')) return;
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productData)
+      });
 
-        try {
-            const response = await fetch(`/api/products/bulk-delete`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids: [id] })
-            });
-
-            if (response.ok) {
-                showToast('Product deleted successfully', 'success');
-                loadProducts();
-            }
-        } catch (error) {
-            showToast('Failed to delete product', 'error');
-        }
-    };
-
-    // Close Modal
-    function closeModal() {
-        document.getElementById('product-modal').classList.add('hidden');
-        editingProductId = null;
+      if (response.ok) {
+        showToast(
+          editingProductId ? 'Product updated successfully' : 'Product added successfully',
+          'success'
+        );
+        closeModal();
+        loadProducts();
+      }
+    } catch (error) {
+      showToast('Failed to save product', 'error');
     }
+  }
 
-    // Handle Image Upload
-    function handleImageUpload(e) {
-        const file = e.target.files[0];
-        if (file) {
-            handleImageFile(file);
-        }
-    }
+  // Show Toast
+  function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
 
-    // Handle Image File
-    async function handleImageFile(file) {
-        // Show preview
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            document.getElementById('preview-img').src = e.target.result;
-            document.getElementById('image-preview').classList.remove('hidden');
-            document.getElementById('upload-placeholder').classList.add('hidden');
-        };
-        reader.readAsDataURL(file);
+    const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+    const icon = type === 'success' ? 'check_circle' : 'error';
 
-        // Upload to server
-        const formData = new FormData();
-        formData.append('image', file);
-
-        try {
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                document.getElementById('image-url').value = data.imageUrl;
-                showToast('Image uploaded successfully', 'success');
-            }
-        } catch (error) {
-            showToast('Failed to upload image', 'error');
-        }
-    }
-
-    // Handle Product Submit
-    async function handleProductSubmit(e) {
-        e.preventDefault();
-
-        const productData = {
-            name: document.getElementById('product-name').value,
-            price: parseFloat(document.getElementById('product-price').value),
-            category: document.getElementById('product-category').value,
-            description: document.getElementById('product-description').value,
-            image: document.getElementById('image-url').value || 'https://via.placeholder.com/400x500?text=Product+Image'
-        };
-
-        try {
-            const url = editingProductId
-                ? `/api/products/${editingProductId}`
-                : '/api/products';
-
-            const method = editingProductId ? 'PUT' : 'POST';
-
-            const response = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(productData)
-            });
-
-            if (response.ok) {
-                showToast(
-                    editingProductId ? 'Product updated successfully' : 'Product added successfully',
-                    'success'
-                );
-                closeModal();
-                loadProducts();
-            }
-        } catch (error) {
-            showToast('Failed to save product', 'error');
-        }
-    }
-
-    // Show Toast
-    function showToast(message, type = 'success') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-
-        const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
-        const icon = type === 'success' ? 'check_circle' : 'error';
-
-        toast.className = `flex items-center gap-3 ${bgColor} text-white px-6 py-4 rounded-xl shadow-lg transform transition-all duration-300 translate-x-0`;
-        toast.innerHTML = `
+    toast.className = `flex items-center gap-3 ${bgColor} text-white px-6 py-4 rounded-xl shadow-lg transform transition-all duration-300 translate-x-0`;
+    toast.innerHTML = `
       <span class="material-symbols-outlined">${icon}</span>
       <span class="font-medium">${message}</span>
     `;
 
-        container.appendChild(toast);
+    container.appendChild(toast);
 
-        setTimeout(() => {
-            toast.classList.add('translate-x-full', 'opacity-0');
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    }
+    setTimeout(() => {
+      toast.classList.add('translate-x-full', 'opacity-0');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
 }
 
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAdminHandlers);
+  document.addEventListener('DOMContentLoaded', initAdminHandlers);
 } else {
-    initAdminHandlers();
+  initAdminHandlers();
 }

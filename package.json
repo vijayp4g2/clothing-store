@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js",
-    "start": "node server.js"
+    "dev": "vercel dev",
+    "start": "vercel dev",
+    "build": "echo 'No build step needed for static site'",
+    "deploy": "vercel --prod",
+    "dev:old": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
