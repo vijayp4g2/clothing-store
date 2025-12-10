@@ -89,4 +89,20 @@ const products = [
     }
 ];
 
-module.exports = { products };
+const { db } = require('./db');
+
+async function getProducts() {
+    try {
+        const snapshot = await db.collection('products').get();
+        if (snapshot.empty) {
+            return products;
+        }
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error('Error fetching from DB:', error);
+        return products;
+    }
+}
+
+module.exports = { products, getProducts };
+
