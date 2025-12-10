@@ -1,17 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+const { products: initialProducts } = require('./_data');
 
-// Read products from JSON file
+// Clone products array for this invocation
 function getProducts() {
-    // In Vercel, use path relative to the project root
-    const productsPath = path.join(__dirname, '..', 'data', 'products.json');
-    const data = fs.readFileSync(productsPath, 'utf-8');
-    return JSON.parse(data);
+    return [...initialProducts];
 }
-
-// Note: In serverless environment, file writes won't persist
-// To persist data, use Vercel KV, database, or other storage
-// For now, this works for read-only operations
 
 module.exports = async (req, res) => {
     // Enable CORS
@@ -61,8 +53,6 @@ module.exports = async (req, res) => {
                 createdAt: new Date().toISOString()
             };
 
-            // WARNING: This won't persist in serverless environment
-            // You need to use a database or Vercel KV for persistence
             products.push(newProduct);
 
             return res.status(201).json({

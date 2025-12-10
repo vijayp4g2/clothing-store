@@ -1,11 +1,8 @@
-const fs = require('fs');
-const path = require('path');
+const { products: initialProducts } = require('./_data');
 
-// Read products from JSON file
+// Clone products array for this invocation
 function getProducts() {
-    const productsPath = path.join(__dirname, '..', 'data', 'products.json');
-    const data = fs.readFileSync(productsPath, 'utf-8');
-    return JSON.parse(data);
+    return [...initialProducts];
 }
 
 module.exports = async (req, res) => {
@@ -45,7 +42,6 @@ module.exports = async (req, res) => {
             createdAt: new Date().toISOString()
         };
 
-        // WARNING: This won't persist in serverless environment
         products.push(newProduct);
 
         return res.status(201).json({
