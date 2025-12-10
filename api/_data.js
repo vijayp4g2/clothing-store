@@ -89,9 +89,11 @@ const products = [
     }
 ];
 
-const { db } = require('./db');
+const { getDb } = require('./db');
 
 async function getProducts() {
+    const db = getDb();
+
     if (!db) {
         // Fallback to static data if DB is not connected
         return products;
