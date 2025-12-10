@@ -3,7 +3,7 @@ const path = require('path');
 
 // Read products from JSON file
 function getProducts() {
-    const productsPath = path.join(process.cwd(), 'data', 'products.json');
+    const productsPath = path.join(__dirname, '..', 'data', 'products.json');
     const data = fs.readFileSync(productsPath, 'utf-8');
     return JSON.parse(data);
 }
