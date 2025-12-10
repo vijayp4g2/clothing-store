@@ -92,6 +92,11 @@ const products = [
 const { db } = require('./db');
 
 async function getProducts() {
+    if (!db) {
+        // Fallback to static data if DB is not connected
+        return products;
+    }
+
     try {
         const snapshot = await db.collection('products').get();
         if (snapshot.empty) {

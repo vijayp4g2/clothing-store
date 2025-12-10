@@ -1,9 +1,10 @@
-
 const admin = require('firebase-admin');
 
-// Prevent multiple initializations
-if (!admin.apps.length) {
-    try {
+let db = null;
+
+try {
+    // Prevent multiple initializations
+    if (!admin.apps.length) {
         let credential;
 
         if (process.env.FIREBASE_SERVICE_ACCOUNT) {
@@ -16,11 +17,13 @@ if (!admin.apps.length) {
         }
 
         admin.initializeApp({ credential });
-    } catch (error) {
-        console.log('Firebase admin initialization error', error.stack);
     }
-}
 
-const db = admin.firestore();
+    db = admin.firestore();
+    console.log('Firebase initialized successfully');
+} catch (error) {
+    console.error('Firebase initialization failed:', error.message);
+    // Proceed without DB - db remains null
+}
 
 module.exports = { db };
