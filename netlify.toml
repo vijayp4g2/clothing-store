@@ -1,0 +1,18 @@
+[build]
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/products"
+  to = "/.netlify/functions/products"
+  status = 200
+
+[[redirects]]
+  from = "/api/products/:id"
+  to = "/.netlify/functions/products"
+  status = 200
+
+# SPA fallback - serve index.html for all routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

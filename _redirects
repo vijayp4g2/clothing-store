@@ -1,0 +1,3 @@
+/api/products  /.netlify/functions/products  200
+/api/products/:id  /.netlify/functions/products  200
+/*  /index.html  200
